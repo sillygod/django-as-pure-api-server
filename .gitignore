@@ -1,0 +1,15 @@
+*.pyc
+*.egg-info/
+*.swp
+*.sqlite3
+*.db
+__pycache__
+.cache/
+.projectile
+npm-debug.log
+build/
+node_modules/
+migrations/
+media/
+static/
+env.ini

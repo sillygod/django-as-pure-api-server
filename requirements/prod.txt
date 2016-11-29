@@ -1,0 +1,8 @@
+Django<1.9
+django-grappelli==2.8.2
+djangorestframework==3.5.2
+djangorestframework-jwt==1.8.0
+Pillow==3.4
+requests==2.9.1
+pytz
+django-mptt
