@@ -54,3 +54,17 @@ also prepare your `env.ini` file.
 ```ini
 DEBUG = False
 ```
+
+
+# What we are done
+
+ - [x] api versioning
+ - [x] api swagger doc settings
+ - [x] docker env simulate
+ - [ ] member system bare bone structure
+ - [ ] social auth
+ - [ ] jwt authentication
+ - [x] how to make all app under api directory foundable by import
+ - [x] a tree structure for certain data
+ - [ ] upgrade django to version 1.1x?
+ 

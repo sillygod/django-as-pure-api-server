@@ -1,6 +1,14 @@
+import os
+import datetime
+import hashlib
 import random
 import string
 import uuid
+import json
+import io
+
+import PIL
+from PIL import ImageFilter
 
 from django.core import validators
 from django.conf import settings
@@ -31,7 +39,7 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(username=username, email=email,
                           is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, mobile_number=mobile_number,
+                          is_superuser=is_superuser, mobile_phone=mobile_number,
                           date_joined=now, **kwargs)
 
         user.set_password(password)
@@ -130,6 +138,128 @@ class User(AbstractUser):
                 if not type(self).objects.filter(token=token).exists():
                     self.token = token
                     break
+
+        return super().save(*args, **kwargs)
+
+
+class Horoscope:
+
+    """a simple horoscope to date mapper
+    """
+
+    @staticmethod
+    def _str_to_date(date):
+        date = datetime.datetime.strptime(date, '%m-%d')
+        return date
+
+    mapper = {
+        'aries': [_str_to_date.__func__('03-21'), _str_to_date.__func__('04-20')],
+        'taurus': [_str_to_date.__func__('04-21'), _str_to_date.__func__('05-21')],
+        'gemini': [_str_to_date.__func__('05-22'), _str_to_date.__func__('06-21')],
+        'cancer': [_str_to_date.__func__('06-22'), _str_to_date.__func__('07-23')],
+        'leo': [_str_to_date.__func__('07-24'), _str_to_date.__func__('08-23')],
+        'virgo': [_str_to_date.__func__('08-24'), _str_to_date.__func__('09-23')],
+        'libra': [_str_to_date.__func__('09-24'), _str_to_date.__func__('10-23')],
+        'scorpio': [_str_to_date.__func__('10-24'), _str_to_date.__func__('11-22')],
+        'sagittarius': [_str_to_date.__func__('11-23'), _str_to_date.__func__('12-22')],
+        'capricorn': [_str_to_date.__func__('12-23'), _str_to_date.__func__('01-20')],
+        'aquarius': [_str_to_date.__func__('01-21'), _str_to_date.__func__('02-19')],
+        'pisces': [_str_to_date.__func__('02-20'), _str_to_date.__func__('03-20')]
+    }
+
+
+    @classmethod
+    def from_date(cls, date):
+        result = None
+
+        try:
+            date = datetime.datetime.strptime(date, '%m-%d')
+        except ValueError:
+            raise ValueError('the format should be {}}'.format('%m-%d'))
+
+        for key, value in Horoscope.mapper.items():
+            if date >= value[0] and date <= value[1]:
+                result = key
+                break
+
+        return result or 'capricorn'
+
+
+# maybe we should define some util class or function for image process
+# gray?
+# compress?
+
+class ProfileAttrProxy:
+
+    def __init__(self, profile):
+        self._profile = profile
+        suerp().__init__()
+
+    def __getattr__(self, item):
+        data = json.loads(self._profile.extra_data or '{}')
+        return data[item]
+
+    def __setattr__(self, key, value):
+        if key == '_profile':
+            return super().__setattr__(key, value)
+
+        try:
+            data = json.loads(self._profile.extra_data)
+        except ValueError:
+            data = {}
+
+        data[key] = value
+        self._profile.extra_data = json.dumps(data)
+
+
+class BaseProfile(models.Model):
+
+    """
+    """
+
+    def _get_upload_path(instance, filename):
+        now = timezone.now()
+        year = now.strftime('%Y')
+        path = instance.__class__.__name__
+        folder = year
+
+        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:8]
+        ext = filename.split('.')[:-1]
+        filename = '.'.join([hashlib.sha1((salt+filename).encode('utf-8')).hexdigest()[:15], ext])
+
+        return os.path.join(path, folder, instance.user.token, filename)
+
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, related_name='profile', verbose_name=_('baseProfile', 'user'))
+    mugshot = models.ImageField(blank=True, null=True, upload_to=_get_upload_path, verbose_name=_('baseProfile', 'mugshot'))
+
+    def __str__(self):
+        return "{}'s profile".format(self.user.username)
+
+    class Meta:
+        abstract = True
+
+
+class DiamondProfile(models.Model):
+
+    """
+    """
+
+    class Meta:
+        abstract = True
+
+
+class Profile(DiamondProfile, BaseProfile):
+
+    """
+    """
+
+    class Meta:
+        verbose_name = _('profile', 'member profile')
+
+    @property
+    def attrs(self):
+        return ProfileAttrProxy(self)
 
 
 class SocialUserData(models.Model):

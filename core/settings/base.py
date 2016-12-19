@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.join(BASE_DIR, 'api'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -29,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     'grappelli', # must put before django.contrib.admin
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,13 +42,15 @@ INSTALLED_APPS = (
 
     # third party app
     'rest_framework',
+    'rest_framework_swagger',
     'mptt',
 
     # project's app
     'api',
-    'api.member',
-    'api.injury',
+    'member',
+    'injury',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -90,6 +96,13 @@ DATABASES = {
     }
 }
 
+GRAPPELLI_ADMIN_TITLE = 'demo-project'
+
+AUTHENTICATION_BACKENDS = (
+    'member.backends.EmailPasswordBackend',
+    'member.backends.SocialLoginBackend',
+)
+
 
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
@@ -100,7 +113,8 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'EXCEPTION_HANDLER': 'api.utils.api_error_handler',
 }
 
 
@@ -108,6 +122,22 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'zh-cn'
+
+# LANGUAGES = (
+#     ('en', _('Englisht')),
+#     ('zh-tw', _('Traditional Chinese')),
+#     ('zh-cn', _('Simplified Chinese')),
+# )
+# it seems that no need for LANGUAGES settings for modeltranslation module
+# Note:
+#    you need to do migrations when you change settings.LANGUAGES or
+#    settings.MODELTRANSLATION_LANGUAGES or registered or unregistered a field
+#
+# More detail to see http://django-modeltranslation.readthedocs.io/en/latest/registration.html#migrations-django-1-7
+MODELTRANSLATION_LANGUAGES = ('en', 'zh-cn', )
+MODELTRANSLATION_FALLBACK_LANGUAGES = ('en', 'zh-cn', )
+MODELTRANSLATION_AUTO_POPULATE = True
 
 TIME_ZONE = 'UTC'
 

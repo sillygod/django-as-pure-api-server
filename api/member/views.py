@@ -9,7 +9,7 @@ from rest_framework import (
 )
 
 from .serializers import (
-    UserSerializer,
+    UserCreateSerializer,
     UserSerializerNew
 )
 
@@ -21,11 +21,11 @@ class UserViewSet(mixins.ListModelMixin,
     """
 
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
 
     def get_serializer_class(self):
         if self.request.version == 'v1':
-            return UserSerializer
+            return UserCreateSerializer
         elif self.request.version == 'v2':
             return UserSerializerNew
 

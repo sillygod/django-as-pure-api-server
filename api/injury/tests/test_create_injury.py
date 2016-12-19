@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from api.injury.models import Injury
+from injury.models import Injury
 
 
 class InjuryTestCase(TestCase):
