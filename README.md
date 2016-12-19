@@ -1,4 +1,4 @@
-# Sun-practice
+# Django as Pure Api Server
 
 a pure api server implemented by django
 
@@ -28,7 +28,7 @@ INSTALLED_APPS = ('djangodebugtoolbar', ) ; note this will append new app in INS
 You can use django command `python manage.py runserver`. You can also use uwsgi to run server with the following command.
 
 ```sh
-STATIC=/home/jing/Desktop/sun-practice/static PORT=8000 /home/jing/miniconda2/envs/sun/bin/uwsgi --ini core/wsgi/uwsgi.ini
+STATIC=/home/jing/Desktop/django-as-pure-api-server/static PORT=8000 /home/jing/miniconda2/envs/sun/bin/uwsgi --ini core/wsgi/uwsgi.ini
 ```
 
 then open 127.0.0.1:8000 you will see it.
