@@ -13,6 +13,6 @@ before_install:
   - pip install -U pip
   - npm install -g npm
 
-install: "pip install -U -r requirements_dev.txt"
+install: "pip install -U -r requirements/dev.txt"
 
 script: pytest --ignore=node_modules
