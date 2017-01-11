@@ -3,3 +3,4 @@ pytest
 pytest-django
 ipython
 django-debug-toolbar
+git+https://github.com/djsutho/django-debug-toolbar-request-history.git

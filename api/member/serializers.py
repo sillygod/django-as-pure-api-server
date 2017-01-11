@@ -23,6 +23,9 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework.relations import RelatedField
 from rest_framework.settings import APISettings
 
+from .oauth2_client import get_local_host
+from .models import SocialUserData
+
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -91,7 +94,7 @@ class JSONWebTokenSerializerWithEmail(Serializer):
             if user:
                 if not user.is_active:
                     msg = _('User account is disabled.')
-                    raise serializers.ValidationError(msg)
+                    raise serializers.ValidationError(msg, 1000)
 
                 payload = jwt_payload_handler(user)
 
@@ -105,7 +108,7 @@ class JSONWebTokenSerializerWithEmail(Serializer):
         else:
             msg = _('Must include "{username_field}" and "password".')
             msg = msg.format(username_field=self.fields['email'])
-            raise serializers.ValidationError(msg)
+            raise serializers.ValidationError(msg, 1000)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -125,13 +128,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError({'code': 1001,
-                                               'msg': 'this email has been registered'})
+            raise serializers.ValidationError('this email has been registered', 1004)
         return value
 
     def validate_password2(self, value):
         if value != self.initial_data['password']:
-            raise serializers.ValidationError({'code': 1002, 'msg': 'password is not consistent'})
+            raise serializers.ValidationError('password is not consistent', 1001)
 
     def create(self, validated_data):
         validated_data.pop('password2')
@@ -139,9 +141,76 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserSerializerNew(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', )
+        fields = ('token', 'username', 'email', )
+
+
+class SocialAuthSerializer(serializers.Serializer):
+
+    """encapsulate social auth process
+    """
+
+    service = serializers.CharField(max_length=256)
+    access_token = serializers.CharField(max_length=1024)
+
+    def _service_factory(self, name):
+        try:
+            module = importlib.import_module('member.oauth2_client')
+            service = getattr(module, name.capitalize()+'Client')
+            return service
+        except:
+            return None
+
+    def validate_access_token(self, value):
+        """
+        """
+        service_class = self.validate_service(self.initial_data['service'])
+        self.service_client = service_class(local_host=get_local_host(self.context['request']))
+        self.service_client.set_access_token(value)
+        try:
+            self._social_data = self.service_client.get_user_info()
+        except Exception as e:
+            raise serializers.ValidationError(str(e), 1003)
+
+        user = User.objects.filter(email=self._social_data['email'])
+        if user.existst():
+            social_id = SocialUserData.objects.filter(user=user.first())
+            if social_id.exists():
+                raise serializers.ValidationError('this email has been registered in social auth', 1002)
+
+        return value
+
+    def validate_service(self, value):
+        """check whether the service is supported or not.
+        return the service if it's supported
+        """
+        service = self._service_factory(value)
+        if not service:
+            raise serializers.ValidationError('{} social auth not supported currently'.format(value), 1008)
+
+        return service
+
+    def create(self, validated_data):
+        """maybe user is registered but not create its own social auth account so
+        we need to do a check first
+
+        return an instance with social data and user
+        """
+        user = User.objects.filter(email=self._social_data['email'])
+        if user.exists():
+            user = user.first()
+        else:
+            user = User.objects.create_user(email=self._social_data['email'])
+
+        instance = SocialUserData.objects.create(
+            user=user,
+            service=validated_data['service'].service.lowser(),
+            username=self._social_data['id']
+        )
+
+        self._social_data.update({'user': user})
+        return self._social_data
 

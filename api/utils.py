@@ -1,5 +1,10 @@
+from contextlib import contextmanager
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import APIException
+from rest_framework.response import Response
+from rest_framework import exceptions
+from rest_framework import status
+from rest_framework.serializers import ValidationError
 
 
 def format_response(status, message='', data=None, errors=None, **kwargs):
@@ -40,11 +45,6 @@ def api_error_handler(exc, context):
      - default_code: we can use it as status code
 
     """
-    import pdb; pdb.set_trace()
-    response = exception_handler(exc, contet)
-
-
-    if response is not None:
-        response.data['']
+    response = exception_handler(exc, context)
 
     return response

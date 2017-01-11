@@ -9,14 +9,8 @@ RUN \
   mkdir app
 
 ADD . /app/
-
 WORKDIR /app
 RUN pip install -r requirements/dev.txt && pip install uwsgi
-
-RUN useradd -ms /bin/bash jing
-
-RUN \
-  python manage.py collectstatic --noinput
 
 EXPOSE 8000
 ENV PORT 8000
@@ -28,5 +22,4 @@ ENV PORT 8000
 # ENTRYPOINT ["top", "-b"]
 # CMD ["-c"]
 
-ENTRYPOINT ["/app/compose/entrypoint.sh"]
-CMD ["uwsgi --ini core/wsgi/uwsgi.ini"]
+CMD ["uwsgi", "--ini", "core/wsgi/uwsgi.ini"]

@@ -2,21 +2,21 @@ db:
   image: postgres
   environment:
     - POSTGRES_USER=jing
-    - POSTGRES_PASSWORD=jing
+    - POSTGRES_PASSWORD=123456
 
 redis:
   image: redis
-
 
 nginx:
   image: nginx
   links:
     - sun_app:uwsgi
   ports:
-     - "8080:8080"
+     - "80:80"
   volumes:
-    - ./compose/nginx/nginx.conf:/etc/nginx/nginx.conf
-
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./static/.:/var/web/static
+    - ./media/.:/var/web/media
 
 sun_app:
   build: .
@@ -29,8 +29,7 @@ sun_app:
 
   expose:
     - "8000"
-  ports:
-    - "8000:8000"
+
   links:
     - redis:redis
     - db:postgres
