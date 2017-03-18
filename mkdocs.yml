@@ -1,0 +1,6 @@
+site_name: django as pure api server
+pages:
+  - Home: index.md
+  - About: about.md
+
+theme: readthedocs

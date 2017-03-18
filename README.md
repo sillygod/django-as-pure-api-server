@@ -1,6 +1,6 @@
-# Sun-practice
+# Django as Pure API Server
 
-a pure api server implemented by django
+a pure api server implemented by django and django rest framework
 
 
 ## DEVELOPMENT
@@ -60,23 +60,17 @@ also prepare your `env.ini` file.
 DEBUG = False
 ```
 
+### deploy with heroku
+
+
 
 # What we are done
 
- - [x] api versioning
- - [x] api swagger doc settings
- - [x] docker env simulate
- - [x] django debug toolbar include
- - [x] docker compose rewrite
- - [x] how to make all app under api directory foundable by import
- - [x] a tree structure for certain data
- - [x] social auth
- - [x] swagger doc need to wrtie a schema generator
- - [x] api format -- in progress
  - [x] django debug toolbar enable ajax -- https://github.com/djsutho/django-debug-toolbar-request-history/tree/master/ddt_request_history
- - [x] member system bare bone structure 
  - [ ] jwt authentication
  - [ ] upgrade django to version 1.1x?
  - [ ] unit test
  - [ ] functional test
- 
+ - [ ] update django-rest-framework, django
+ - [ ] update [docker-compose](https://docs.docker.com/compose/compose-file/compose-versioning/)
+ - [ ] add doc with readthedoc, write some keyontes or tutorial?

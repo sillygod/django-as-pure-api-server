@@ -1,6 +1,6 @@
 -r prod.txt
-pytest
-pytest-django
+pytest==3.0.7
+pytest-django==3.1.2
 ipython
-django-debug-toolbar
+django-debug-toolbar==1.7
 git+https://github.com/djsutho/django-debug-toolbar-request-history.git
