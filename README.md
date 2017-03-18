@@ -67,10 +67,9 @@ DEBUG = False
 # What we are done
 
  - [x] django debug toolbar enable ajax -- https://github.com/djsutho/django-debug-toolbar-request-history/tree/master/ddt_request_history
+ - [x] update django-rest-framework, django
  - [ ] jwt authentication
- - [ ] upgrade django to version 1.1x?
  - [ ] unit test
  - [ ] functional test
- - [ ] update django-rest-framework, django
  - [ ] update [docker-compose](https://docs.docker.com/compose/compose-file/compose-versioning/)
  - [ ] add doc with readthedoc, write some keyontes or tutorial?

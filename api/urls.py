@@ -8,8 +8,6 @@ from django.conf.urls import (
     include
 )
 
-from rest_framework_swagger.views import get_swagger_view
-from rest_framework_swagger import renderers as swagger_renderers
 from rest_framework.decorators import (
     api_view,
     renderer_classes,
@@ -22,6 +20,9 @@ from rest_framework import (
     permissions,
     response
 )
+
+from rest_framework_swagger.views import get_swagger_view
+from rest_framework_swagger import renderers as swagger_renderers
 
 import coreapi
 import yaml
@@ -101,4 +102,5 @@ def schema_view(request):
 urlpatterns = [
     url(r'^$', schema_view),
     url(r'^(?P<version>v1|v2)/member/', include('api.member.urls', namespace='member')),
+
 ]
