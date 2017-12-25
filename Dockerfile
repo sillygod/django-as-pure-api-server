@@ -10,7 +10,7 @@ RUN apk update && \
 
 ADD requirements /app/requirements
 WORKDIR /app
-RUN pip install -r requirements/dev.txt && pip install uwsgi
+RUN pip install --no-cache-dir -r requirements/dev.txt && pip install uwsgi
 
 EXPOSE 8000
 ENV PORT 8000

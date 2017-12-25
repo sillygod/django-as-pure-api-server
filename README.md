@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sillygod/django-as-pure-api-server.svg?branch=master)](https://travis-ci.org/sillygod/django-as-pure-api-server)
+
 # Django as Pure API Server
 
 a pure api server implemented by django and django rest framework
