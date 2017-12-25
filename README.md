@@ -43,6 +43,9 @@ You can use above example env.ini if you want to use docker-compose as a develop
 
 ```sh
 docker-compose up # this will build image first time
+docker-compose run app python manage.py collectstatic
+docker-compose run app migrate
+docker-compose run app python manage.py createsuperuser
 docker-compose logs [service name] # can see the log for certain service
 ```
 
@@ -60,16 +63,20 @@ also prepare your `env.ini` file.
 DEBUG = False
 ```
 
-### deploy with heroku
+# Preview
+
+### admin page
+
+![admin page](https://i.imgur.com/mzHUSoM.png)
+
+### swagger api
+
+![swagger api](https://i.imgur.com/R1XrVY3.png)
 
 
 
 # What we are done
 
- - [x] django debug toolbar enable ajax -- https://github.com/djsutho/django-debug-toolbar-request-history/tree/master/ddt_request_history
- - [x] update django-rest-framework, django
  - [ ] jwt authentication
  - [ ] unit test
  - [ ] functional test
- - [ ] update [docker-compose](https://docs.docker.com/compose/compose-file/compose-versioning/)
- - [ ] add doc with readthedoc, write some keyontes or tutorial?

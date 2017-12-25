@@ -1,35 +1,41 @@
-db:
-  image: postgres
-  environment:
-    - POSTGRES_USER=jing
-    - POSTGRES_PASSWORD=123456
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=jing
+      - POSTGRES_PASSWORD=123456
 
-redis:
-  image: redis
+  redis:
+    image: redis
 
-nginx:
-  image: nginx
-  links:
-    - sun_app:uwsgi
-  ports:
-     - "80:80"
-  volumes:
-    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    - ./static/.:/var/web/static
-    - ./media/.:/var/web/media
+  nginx:
+    image: nginx
+    links:
+      - app:uwsgi
 
-sun_app:
-  build: .
-  environment:
-    - PORT=8000
-    - STATIC=/app/static
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./static/.:/var/web/static
+      - ./media/.:/var/web/media
 
-  volumes:
-    - .:/app
+  app:
+    build: .
+    environment:
+      - PORT=8000
+      - STATIC=/app/static
 
-  expose:
-    - "8000"
+    volumes:
+      - .:/app
 
-  links:
-    - redis:redis
-    - db:postgres
+    expose:
+      - "8000"
+
+    depends_on:
+      - db
+
+    links:
+      - redis:redis
+      - db:postgres

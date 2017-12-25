@@ -1,14 +1,14 @@
-FROM python:3.6
+FROM python:3.6-alpine
 
 ENV PYTHONUNBUFFERED 1
 
-RUN \
-  apt-get update && \
-  apt-get install -y apt-transport-https && \
-  apt-get clean && \
+
+RUN apk update && \
+  apk add --no-cache curl build-base python-dev jpeg-dev zlib-dev git postgresql-dev linux-headers musl-dev && \
   mkdir app
 
-ADD . /app/
+
+ADD requirements /app/requirements
 WORKDIR /app
 RUN pip install -r requirements/dev.txt && pip install uwsgi
 
