@@ -12,8 +12,6 @@ ADD requirements /app/requirements
 WORKDIR /app
 RUN pip install --no-cache-dir -r requirements/dev.txt && pip install uwsgi
 
-EXPOSE 8000
-ENV PORT 8000
 
 # https://docs.docker.com/engine/reference/builder/
 # According to the doc, we can use the exec form of ENTRYPOINT to set fairly stable default
@@ -21,5 +19,8 @@ ENV PORT 8000
 # ex.
 # ENTRYPOINT ["top", "-b"]
 # CMD ["-c"]
+
+HEALTHCHECK --interval=5s --timeout=10s --start-period=5s \
+  CMD curl -fs http://localhost:$PORT/health || exit 1
 
 CMD ["uwsgi", "--ini", "core/wsgi/uwsgi.ini"]
