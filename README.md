@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sillygod/django-as-pure-api-server.svg?branch=master)](https://travis-ci.org/sillygod/django-as-pure-api-server)
+[![GitHub license](https://img.shields.io/github/license/sillygod/django-as-pure-api-server.svg)](https://github.com/sillygod/django-as-pure-api-server/blob/master/LICENSE)  
 
 # Django as Pure API Server
 
@@ -14,19 +15,9 @@ pip install -r requirements/dev.txt # for dev
 
 ```
 
-and prepare your `env.ini` file. overwrite the settings you want and put it in the directory `settings`
+#### Customize
 
-ex.
-
-```ini
-
-[django settings]
-DEBUG=True
-INSTALLED_APPS=('debug_toolbar', )
-MIDDLEWARE_CLASSES=('debug_toolbar.middleware.DebugToolbarMiddleware', )
-DATABASES={'default':{'ENGINE': 'django.db.backends.postgresql_psycopg2', 'NAME': 'weis', 'USER': 'jing', 'PASSWORD': '123456', 'HOST': 'postgres'}}
-
-```
+adjust the `settings.dev.py` or `settings.prod.py` for your need. We will grab the environment variable `env` to decide to use `dev.py` or `prod.py`'s settings. By Default, we use dev.py.
 
 #### RUN SERVER
 
@@ -51,6 +42,11 @@ docker-compose run app python manage.py createsuperuser
 docker-compose logs [service name] # can see the log for certain service
 ```
 
+#### Run Test
+
+we use `pytest` with django.
+
+coverage?
 
 ## DEPLOY
 
@@ -59,9 +55,9 @@ docker-compose logs [service name] # can see the log for certain service
 pip install -r requirements/prod.txt
 ```
 
-also prepare your `env.ini` file.
+prod.py
 
-```ini
+```py
 DEBUG = False
 ```
 
@@ -75,7 +71,9 @@ DEBUG = False
 
 ![swagger api](https://i.imgur.com/R1XrVY3.png)
 
+### django debug tool bar
 
+![django debug tool bar](https://i.imgur.com/0T4DNAn.png)
 
 # What we are done
 

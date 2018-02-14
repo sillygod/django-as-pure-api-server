@@ -3,6 +3,7 @@
 *.swp
 *.sqlite3
 *.db
+.vscode
 __pycache__
 .cache/
 .projectile
