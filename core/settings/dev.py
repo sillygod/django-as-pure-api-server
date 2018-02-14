@@ -7,31 +7,9 @@ here, we can check django-environ
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from .base import *
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-INSTALLED_APPS = (
-    'grappelli', # must put before django.contrib.admin
-    'modeltranslation',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    # third party app
+INSTALLED_APPS += (
     'debug_toolbar',
-    'rest_framework',
-    'rest_framework_swagger',
-    'mptt',
-
-    # project's app
-    'api',
-    'member',
-    'injury',
 )
-
 
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
