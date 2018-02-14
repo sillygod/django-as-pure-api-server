@@ -69,6 +69,10 @@ REST_FRAMEWORK = {
 LANGUAGE_CODE = 'en-us'
 
 
+def show_toolbar(request):
+    """we can write some logic for whether toolbar should appear or not"""
+    return True
+
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK" : show_toolbar,
 }
