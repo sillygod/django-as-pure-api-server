@@ -1,0 +1,53 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo:3
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      # Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/5.6/security-settings.html#general-security-settings
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024m
+
+  graylog:
+    image: graylog/graylog:2.4.3-1
+    environment:
+      - GRAYLOG_PASSWORD_SECRET=changemechangemok
+      # below is the sha256 of admin
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_WEB_ENDPOINT_URI=http://127.0.0.1:9000/api
+    links:
+      - mongodb:mongo
+      - elasticsearch
+    depends_on:
+      - mongodb
+      - elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog TCP
+      - 5140:5140
+      # Syslog UDP
+      - 5140:5140/udp
+      # GELF TCP (graylog extension log format)
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
+
+# I don't want mouont data folder for local usage.
+# volumes:
+#   mongo_data:
+#     driver: local
+#   es_data:
+#     driver: local
+#   graylog_journal:
+#     driver: local
