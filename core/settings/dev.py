@@ -5,7 +5,8 @@ here, we can check django-environ
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from .base import *
+from .base import * # pylint: disable=W0614
+# above comment can disable pylint waring for this line
 
 INSTALLED_APPS += (
     'debug_toolbar',

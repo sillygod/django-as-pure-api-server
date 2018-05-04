@@ -193,7 +193,7 @@ class ProfileAttrProxy:
 
     def __init__(self, profile):
         self._profile = profile
-        suerp().__init__()
+        super().__init__()
 
     def __getattr__(self, item):
         data = json.loads(self._profile.extra_data or '{}')

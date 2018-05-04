@@ -15,6 +15,20 @@ pip install -r requirements/dev.txt # for dev
 
 ```
 
+or use pipenv install
+
+```sh
+pipenv install -d (including dev dependencies)
+```
+
+to start the interactive virtualenv to use `pipenv shell --anyway` if you use pipenv.
+
+
+> 使用pipenv遇到的問題，需要在~/.bash_profile裡面加入
+> export LC_ALL=en_US.UTF-8
+> export LANG=en_US.UTF-8
+> 那時有遇到issue，不加會無法運作
+
 #### Customize
 
 adjust the `settings.dev.py` or `settings.prod.py` for your need. We will grab the environment variable `env` to decide to use `dev.py` or `prod.py`'s settings. By Default, we use dev.py.
@@ -42,6 +56,15 @@ docker-compose run app python manage.py createsuperuser
 docker-compose logs [service name] # can see the log for certain service
 ```
 
+#### pylint
+
+we can see pylint setting by run the following script
+
+```sh
+pylint --generate-rcfile > .pylintrc
+```
+
+
 #### Run Test
 
 we use `pytest` with django.
@@ -52,7 +75,9 @@ coverage?
 
 
 ```sh
-pip install -r requirements/prod.txt
+pip install -r requirements/prod.txt # or
+
+pipenv install
 ```
 
 prod.py
