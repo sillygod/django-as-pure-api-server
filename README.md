@@ -23,14 +23,25 @@ pipenv install -d (including dev dependencies)
 to start the interactive virtualenv to use `pipenv shell --anyway` if you use pipenv.
 
 
-> 使用pipenv遇到的問題，需要在~/.bash_profile裡面加入
+> I encounter a problem when I use pipenv. I need to add the folowing variable in the ~/.bash_profile
 > export LC_ALL=en_US.UTF-8
 > export LANG=en_US.UTF-8
-> 那時有遇到issue，不加會無法運作
 
 ## Customize
 
 adjust the `settings.dev.py` or `settings.prod.py` for your need. We will grab the environment variable `env` to decide to use `dev.py` or `prod.py`'s settings. By Default, we use dev.py.
+
+## Create a new app
+
+```sh
+python manage.py startapp [your app name]
+```
+
+## Migration
+
+Note! you should run `python manage.py makemigrations member` first and then run all migrations
+
+If you want to without specifying the app name to run migrate, you have to add an empty `migrations` module in the app directory.
 
 ## RUN SERVER
 
@@ -47,7 +58,9 @@ or you can use docker-compose to run server if you want docker a try.
 ```sh
 docker-compose up # this will build image first time
 docker-compose run app python manage.py collectstatic
-docker-compose run app migrate
+docker-compose run app python makemigrations or migrate
+#.. it seems that you need to specify the app to perform makemigrations 
+# ex. python makemigrations member
 docker-compose run app python manage.py createsuperuser
 docker-compose logs [service name] # can see the log for certain service
 ```
@@ -98,5 +111,4 @@ DEBUG = False
 
 # What we are done
 
- - [ ] jwt authentication
  - [ ] functional test

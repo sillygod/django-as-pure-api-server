@@ -5,10 +5,10 @@ from rest_framework.response import Response
 from rest_framework import exceptions
 from rest_framework import status
 from rest_framework.serializers import ValidationError
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 
-def format_response(status, message='', data=None, errors=None, **kwargs):
-
+def format_response(code, message='', data=None, errors=None, **kwargs):
     """An util function unify the api response format
     """
 
@@ -20,8 +20,8 @@ def format_response(status, message='', data=None, errors=None, **kwargs):
     }
 
     wrapper = {
-        'status': status,
-        'message': message or status_map.get(status, message),
+        'code': code,
+        'message': message or status_map.get(code, message),
         'data': data if data is not None else {}
     }
 

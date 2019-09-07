@@ -6,13 +6,15 @@
 *.sqlite3
 *.db
 .vscode
+.env
 __pycache__
 .cache/
 .projectile
 npm-debug.log
 build/
 node_modules/
-migrations/
+/migrations/*
+!/migrations/__init__.py
 media/
 static/
 env.ini

@@ -1,24 +1,16 @@
 from base64 import b64decode
-import re
-import jwt
 import copy
 import importlib
 
-from django.contrib.auth import (
-    get_user_model,
-    authenticate
-)
+from django.contrib.auth import (get_user_model, authenticate)
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext as _
 from rest_framework import serializers
 
-from rest_framework_jwt.compat import (
-    Serializer,
-    get_username_field,
-    PasswordField
-)
+from rest_framework_jwt.compat import (Serializer, get_username_field,
+                                       PasswordField)
 from rest_framework_jwt.settings import api_settings
 from rest_framework.relations import RelatedField
 from rest_framework.settings import APISettings
@@ -34,7 +26,6 @@ jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 
 
 class ForeignKeyRelatedField(RelatedField):
-
     """you can customize the field name to filter the result
     """
 
@@ -44,7 +35,7 @@ class ForeignKeyRelatedField(RelatedField):
 
     def to_internal_value(self, data):
         try:
-            if self.name:
+            if self.fname:
                 filter_kwargs = {self.fname: data}
                 return self.get_queryset().get(**filter_kwargs)
             else:
@@ -63,10 +54,7 @@ class ForeignKeyRelatedField(RelatedField):
 
 
 class JSONWebTokenSerializerWithEmail(Serializer):
-
     """a customize jwt serializer use email and password.
-
-    In credentials, we still need to user username because 
     """
 
     def __init__(self, *args, **kwargs):
@@ -98,10 +86,7 @@ class JSONWebTokenSerializerWithEmail(Serializer):
 
                 payload = jwt_payload_handler(user)
 
-                return {
-                    'token': jwt_encode_handler(payload),
-                    'user': user
-                }
+                return {'token': jwt_encode_handler(payload), 'user': user}
             else:
                 msg = _('Unable to login with provided credentials.')
                 raise serializers.ValidationError(msg)
@@ -112,28 +97,31 @@ class JSONWebTokenSerializerWithEmail(Serializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-
     """handle user creation validation
     """
 
-    password = serializers.CharField(max_length=20, min_length=6,
+    password = serializers.CharField(max_length=20,
+                                     min_length=6,
                                      error_messages={
                                          'blank': 'password can not be empty',
-                                         'min_length': 'password is too short'})
+                                         'min_length': 'password is too short'
+                                     })
     password2 = serializers.CharField()
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username')
+        fields = ('id', 'email', 'password', 'password2')
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError('this email has been registered', 1004)
+            raise serializers.ValidationError('this email has been registered',
+                                              1004)
         return value
 
     def validate_password2(self, value):
         if value != self.initial_data['password']:
-            raise serializers.ValidationError('password is not consistent', 1001)
+            raise serializers.ValidationError('password is not consistent',
+                                              1001)
 
     def create(self, validated_data):
         validated_data.pop('password2')
@@ -142,14 +130,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = get_user_model()
-        fields = ('token', 'username', 'email', )
+        fields = (
+            'token',
+            'username',
+            'email',
+        )
 
 
 class SocialAuthSerializer(serializers.Serializer):
-
     """encapsulate social auth process
     """
 
@@ -159,7 +149,7 @@ class SocialAuthSerializer(serializers.Serializer):
     def _service_factory(self, name):
         try:
             module = importlib.import_module('member.oauth2_client')
-            service = getattr(module, name.capitalize()+'Client')
+            service = getattr(module, name.capitalize() + 'Client')
             return service
         except:
             return None
@@ -168,7 +158,8 @@ class SocialAuthSerializer(serializers.Serializer):
         """
         """
         service_class = self.validate_service(self.initial_data['service'])
-        self.service_client = service_class(local_host=get_local_host(self.context['request']))
+        self.service_client = service_class(
+            local_host=get_local_host(self.context['request']))
         self.service_client.set_access_token(value)
         try:
             self._social_data = self.service_client.get_user_info()
@@ -179,7 +170,8 @@ class SocialAuthSerializer(serializers.Serializer):
         if user.existst():
             social_id = SocialUserData.objects.filter(user=user.first())
             if social_id.exists():
-                raise serializers.ValidationError('this email has been registered in social auth', 1002)
+                raise serializers.ValidationError(
+                    'this email has been registered in social auth', 1002)
 
         return value
 
@@ -189,7 +181,8 @@ class SocialAuthSerializer(serializers.Serializer):
         """
         service = self._service_factory(value)
         if not service:
-            raise serializers.ValidationError('{} social auth not supported currently'.format(value), 1008)
+            raise serializers.ValidationError(
+                '{} social auth not supported currently'.format(value), 1008)
 
         return service
 
@@ -208,9 +201,7 @@ class SocialAuthSerializer(serializers.Serializer):
         instance = SocialUserData.objects.create(
             user=user,
             service=validated_data['service'].service.lowser(),
-            username=self._social_data['id']
-        )
+            username=self._social_data['id'])
 
         self._social_data.update({'user': user})
         return self._social_data
-

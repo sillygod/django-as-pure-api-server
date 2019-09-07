@@ -15,7 +15,7 @@ services:
       - app:uwsgi
 
     ports:
-      - "80:80"
+      - "${SERVER_PORT}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./static/.:/var/web/static

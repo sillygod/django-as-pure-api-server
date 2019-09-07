@@ -1,7 +1,6 @@
 import os
 import logging
 
-
 logger = logging.getLogger('django')
 
 env = os.environ.get("env", "dev")

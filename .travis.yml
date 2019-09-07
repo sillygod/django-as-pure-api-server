@@ -14,4 +14,6 @@ before_install:
 
 install: "pip install -U -r requirements/dev.txt"
 
-script: pytest --ignore=node_modules
+script:
+  - python manage.py makemigrations
+  - pytest --ignore=node_modules

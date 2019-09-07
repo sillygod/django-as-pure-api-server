@@ -5,33 +5,25 @@ here, we can check django-environ
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from .base import * # pylint: disable=W0614
+from .base import *  # pylint: disable=W0614
 # above comment can disable pylint waring for this line
+
+# NOTE: this is just convenient for dev use, you must specify the
+# domain you want to bypass.
+CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
 )
 
-MIDDLEWARE = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-
+MIDDLEWARE += (
     # thrid party middleware
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-)
+    'debug_toolbar.middleware.DebugToolbarMiddleware', )
 
 ROOT_URLCONF = 'core.urls'
 
-
 WSGI_APPLICATION = 'core.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
@@ -50,20 +42,21 @@ AUTHENTICATION_BACKENDS = (
     'member.backends.SocialLoginBackend',
 )
 
-
 REST_FRAMEWORK = {
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    'DEFAULT_VERSIONING_CLASS':
+    'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_PERMISSION_CLASSES':
+    ('rest_framework.permissions.IsAuthenticated', ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'EXCEPTION_HANDLER': 'api.utils.api_error_handler',
+    'DEFAULT_SCHEMA_CLASS':
+    'rest_framework.schemas.coreapi.AutoSchema',
+    'EXCEPTION_HANDLER':
+    'api.utils.api_error_handler',
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -75,12 +68,14 @@ def show_toolbar(request):
     """we can write some logic for whether toolbar should appear or not"""
     return True
 
+
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK" : show_toolbar,
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
 }
 
 DEBUG_TOOLBAR_PANELS = [
-    'ddt_request_history.panels.request_history.RequestHistoryPanel',
+    # TODO: look up this
+    # 'ddt_request_history.panels.request_history.RequestHistoryPanel',
     'debug_toolbar.panels.versions.VersionsPanel',
     'debug_toolbar.panels.timer.TimerPanel',
     'debug_toolbar.panels.settings.SettingsPanel',
@@ -93,5 +88,3 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
 ]
-
-

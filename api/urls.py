@@ -1,6 +1,7 @@
-from urllib.parse import (urlparse, urljoin)
+from urllib.parse import urljoin
 
 from django.conf.urls import (url, include)
+from django.urls import path
 
 from rest_framework.decorators import (api_view, renderer_classes,
                                        permission_classes)
@@ -86,8 +87,12 @@ def schema_view(request):
     return response.Response(schema)
 
 
+app_name = 'api'
+
 urlpatterns = [
     url(r'^$', schema_view),
     url(r'^(?P<version>v1|v2)/member/',
-        include('api.member.urls', namespace='member')),
+        include('member.urls', namespace='member')),
+    url(r'^(?P<version>v1|v2)/message/',
+        include('message.urls', namespace='message')),
 ]

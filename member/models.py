@@ -10,6 +10,7 @@ from django.core import validators
 from django.conf import settings
 from django.db import models
 from django.db import transaction
+from django.core.mail import send_mail
 
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
@@ -168,6 +169,9 @@ class User(AbstractUser):
 
     object = UserManager()
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     def save(self, *args, **kwargs):
         if not self.token:
             for _ in range(100):
@@ -270,6 +274,9 @@ class ProfileAttrProxy:
         data[key] = value
         self._profile.extra_data = json.dumps(data)
 
+    class Meta:
+        proxy = True
+
 
 class BaseProfile(models.Model):
     """
@@ -294,7 +301,7 @@ class BaseProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 models.CASCADE,
                                 primary_key=True,
-                                related_name='profile',
+                                related_name='%(class)s',
                                 verbose_name=_('baseProfile', 'user'))
     mugshot = models.ImageField(blank=True,
                                 null=True,
