@@ -22,7 +22,9 @@ services:
       - ./media/.:/var/web/media
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: ./dockerfiles/dev.dockerfile
     environment:
       - PORT=8000
       - STATIC=/app/static

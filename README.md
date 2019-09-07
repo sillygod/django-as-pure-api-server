@@ -3,16 +3,15 @@
 
 # Django as Pure API Server
 
-a pure api server implemented by django and django rest framework
+A pure api server implemented by django and django rest framework. This combines some development tools like, pytest, django-debug-toolbar, etc.
 
 
-## DEVELOPMENT
+# DEVELOPMENT
 
-#### INSTALL
+## INSTALL
 
 ```sh
 pip install -r requirements/dev.txt # for dev 
-
 ```
 
 or use pipenv install
@@ -29,24 +28,21 @@ to start the interactive virtualenv to use `pipenv shell --anyway` if you use pi
 > export LANG=en_US.UTF-8
 > 那時有遇到issue，不加會無法運作
 
-#### Customize
+## Customize
 
 adjust the `settings.dev.py` or `settings.prod.py` for your need. We will grab the environment variable `env` to decide to use `dev.py` or `prod.py`'s settings. By Default, we use dev.py.
 
-#### RUN SERVER
+## RUN SERVER
 
 You can use django command `python manage.py runserver`. You can also use uwsgi to run server with the following command.
 
 ```sh
-STATIC=/home/jing/Desktop/sun-practice/static PORT=8000 /home/jing/miniconda2/envs/sun/bin/uwsgi --ini core/wsgi/uwsgi.ini
+STATIC=/your absolute project path/static PORT=8000 /your path of uwsgi --ini core/wsgi/uwsgi.ini
 ```
 
 then open http://127.0.0.1:8000 you will see it.
 
 or you can use docker-compose to run server if you want docker a try.
-
-You can use above example env.ini if you want to use docker-compose as a developer server. the env in docker-compose is more closer to the formal server.
-
 
 ```sh
 docker-compose up # this will build image first time
@@ -56,7 +52,7 @@ docker-compose run app python manage.py createsuperuser
 docker-compose logs [service name] # can see the log for certain service
 ```
 
-#### pylint
+## pylint
 
 we can see pylint setting by run the following script
 
@@ -65,13 +61,13 @@ pylint --generate-rcfile > .pylintrc
 ```
 
 
-#### Run Test
+## Run Test
 
 we use `pytest` with django.
 
 coverage?
 
-## DEPLOY
+# DEPLOY
 
 
 ```sh
@@ -103,5 +99,4 @@ DEBUG = False
 # What we are done
 
  - [ ] jwt authentication
- - [ ] unit test
  - [ ] functional test

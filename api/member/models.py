@@ -5,42 +5,45 @@ import random
 import string
 import uuid
 import json
-import io
-
-import PIL
-from PIL import ImageFilter
 
 from django.core import validators
 from django.conf import settings
 from django.db import models
 from django.db import transaction
 
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-    BaseUserManager
-)
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
+                                        BaseUserManager)
 
 from django.utils import timezone
 from django.utils.translation import pgettext_lazy as _
 
 
 class UserManager(BaseUserManager):
-
     """Customize the creatioin of user and super user
     """
 
-    def _create_user(self, username, email, password, mobile_number, is_staff=False, is_superuser=False, **kwargs):
+    def _create_user(self,
+                     username,
+                     email,
+                     password,
+                     mobile_number,
+                     is_staff=False,
+                     is_superuser=False,
+                     **kwargs):
 
         now = timezone.now()
         if not username:
             raise ValueError("The given username must be set")
 
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, mobile_phone=mobile_number,
-                          date_joined=now, **kwargs)
+        user = self.model(username=username,
+                          email=email,
+                          is_staff=is_staff,
+                          is_active=True,
+                          is_superuser=is_superuser,
+                          mobile_phone=mobile_number,
+                          date_joined=now,
+                          **kwargs)
 
         user.set_password(password)
 
@@ -50,20 +53,34 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_user(self, email, username='', password=None, mobile_number='', is_staff=False,
-                    is_superuser=False, **kwargs):
+    def create_user(self,
+                    email,
+                    username='',
+                    password=None,
+                    mobile_number='',
+                    is_staff=False,
+                    is_superuser=False,
+                    **kwargs):
         if username == '':
             username = email.split('@')[0]
         if password is None:
-            password = ''.join(random.sample(string.ascii_letters + string.digits, 10))
+            password = ''.join(
+                random.sample(string.ascii_letters + string.digits, 10))
 
-        return self._create_user(username, email, password, mobile_number, is_staff, is_superuser, **kwargs)
+        return self._create_user(username, email, password, mobile_number,
+                                 is_staff, is_superuser, **kwargs)
 
-    def create_superuser(self, email, username='', password=None, mobile_number='', **kwargs):
+    def create_superuser(self,
+                         email,
+                         username='',
+                         password=None,
+                         mobile_number='',
+                         **kwargs):
         if username == '':
             username = email.split('@')[0]
 
-        return self._create_user(username, email, password, mobile_number, True, True, **kwargs)
+        return self._create_user(username, email, password, mobile_number,
+                                 True, True, **kwargs)
 
 
 class AbstractUser(AbstractBaseUser, PermissionsMixin):
@@ -73,25 +90,44 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     Username, password and email are required. Other fields are optional.
     """
-    username = models.CharField(_('User field', 'username'), max_length=20, default='',
-        help_text=_('User field', 'Required. 20 characters or fewer. Letters, digits and '
-                    '@/./+/-/_ only.'),
+    username = models.CharField(
+        _('User field', 'username'),
+        max_length=20,
+        default='',
+        help_text=_(
+            'User field',
+            'Required. 20 characters or fewer. Letters, digits and '
+            '@/./+/-/_ only.'),
         validators=[
-            validators.RegexValidator(r'^[\w.@+-]+$',
-                                      _('User field', 'Enter a valid username. '
-                                        'This value may contain only letters, numbers '
-                                        'and @/./+/-/_ characters.'), 'invalid'),
+            validators.RegexValidator(
+                r'^[\w.@+-]+$',
+                _(
+                    'User field', 'Enter a valid username. '
+                    'This value may contain only letters, numbers '
+                    'and @/./+/-/_ characters.'), 'invalid'),
         ])
-    first_name = models.CharField(_('User field', 'first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('User field', 'last name'), max_length=30, blank=True)
+    first_name = models.CharField(_('User field', 'first name'),
+                                  max_length=30,
+                                  blank=True)
+    last_name = models.CharField(_('User field', 'last name'),
+                                 max_length=30,
+                                 blank=True)
     email = models.EmailField(_('User field', 'email address'), unique=True)
-    is_staff = models.BooleanField(_('User field', 'staff status'), default=False,
-        help_text=_('User field', 'Designates whether the user can log into this admin '
-                    'site.'))
-    is_active = models.BooleanField(_('User field', 'active'), default=True,
-        help_text=_('User field', 'Designates whether this user should be treated as '
-                    'active. Unselect this instead of deleting accounts.'))
-    date_joined = models.DateTimeField(_('User field', 'date joined'), default=timezone.now)
+    is_staff = models.BooleanField(
+        _('User field', 'staff status'),
+        default=False,
+        help_text=_(
+            'User field',
+            'Designates whether the user can log into this admin '
+            'site.'))
+    is_active = models.BooleanField(
+        _('User field', 'active'),
+        default=True,
+        help_text=_(
+            'User field', 'Designates whether this user should be treated as '
+            'active. Unselect this instead of deleting accounts.'))
+    date_joined = models.DateTimeField(_('User field', 'date joined'),
+                                       default=timezone.now)
 
     objects = UserManager()
 
@@ -122,11 +158,12 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
 
 class User(AbstractUser):
-
     """a customable user model
     """
 
-    mobile_phone = models.CharField(_('User model', 'cell phone num'), max_length=32, default='')
+    mobile_phone = models.CharField(_('User model', 'cell phone num'),
+                                    max_length=32,
+                                    default='')
     token = models.CharField(max_length=300, unique=True)
 
     object = UserManager()
@@ -143,7 +180,6 @@ class User(AbstractUser):
 
 
 class Horoscope:
-
     """a simple horoscope to date mapper
     """
 
@@ -153,20 +189,43 @@ class Horoscope:
         return date
 
     mapper = {
-        'aries': [_str_to_date.__func__('03-21'), _str_to_date.__func__('04-20')],
-        'taurus': [_str_to_date.__func__('04-21'), _str_to_date.__func__('05-21')],
-        'gemini': [_str_to_date.__func__('05-22'), _str_to_date.__func__('06-21')],
-        'cancer': [_str_to_date.__func__('06-22'), _str_to_date.__func__('07-23')],
-        'leo': [_str_to_date.__func__('07-24'), _str_to_date.__func__('08-23')],
-        'virgo': [_str_to_date.__func__('08-24'), _str_to_date.__func__('09-23')],
-        'libra': [_str_to_date.__func__('09-24'), _str_to_date.__func__('10-23')],
-        'scorpio': [_str_to_date.__func__('10-24'), _str_to_date.__func__('11-22')],
-        'sagittarius': [_str_to_date.__func__('11-23'), _str_to_date.__func__('12-22')],
-        'capricorn': [_str_to_date.__func__('12-23'), _str_to_date.__func__('01-20')],
-        'aquarius': [_str_to_date.__func__('01-21'), _str_to_date.__func__('02-19')],
-        'pisces': [_str_to_date.__func__('02-20'), _str_to_date.__func__('03-20')]
+        'aries':
+        [_str_to_date.__func__('03-21'),
+         _str_to_date.__func__('04-20')],
+        'taurus':
+        [_str_to_date.__func__('04-21'),
+         _str_to_date.__func__('05-21')],
+        'gemini':
+        [_str_to_date.__func__('05-22'),
+         _str_to_date.__func__('06-21')],
+        'cancer':
+        [_str_to_date.__func__('06-22'),
+         _str_to_date.__func__('07-23')],
+        'leo':
+        [_str_to_date.__func__('07-24'),
+         _str_to_date.__func__('08-23')],
+        'virgo':
+        [_str_to_date.__func__('08-24'),
+         _str_to_date.__func__('09-23')],
+        'libra':
+        [_str_to_date.__func__('09-24'),
+         _str_to_date.__func__('10-23')],
+        'scorpio':
+        [_str_to_date.__func__('10-24'),
+         _str_to_date.__func__('11-22')],
+        'sagittarius':
+        [_str_to_date.__func__('11-23'),
+         _str_to_date.__func__('12-22')],
+        'capricorn':
+        [_str_to_date.__func__('12-23'),
+         _str_to_date.__func__('01-20')],
+        'aquarius':
+        [_str_to_date.__func__('01-21'),
+         _str_to_date.__func__('02-19')],
+        'pisces':
+        [_str_to_date.__func__('02-20'),
+         _str_to_date.__func__('03-20')]
     }
-
 
     @classmethod
     def from_date(cls, date):
@@ -189,8 +248,8 @@ class Horoscope:
 # gray?
 # compress?
 
-class ProfileAttrProxy:
 
+class ProfileAttrProxy:
     def __init__(self, profile):
         self._profile = profile
         super().__init__()
@@ -213,7 +272,6 @@ class ProfileAttrProxy:
 
 
 class BaseProfile(models.Model):
-
     """
     """
 
@@ -223,15 +281,25 @@ class BaseProfile(models.Model):
         path = instance.__class__.__name__
         folder = year
 
-        salt = hashlib.sha1(str(random.random()).encode('utf-8')).hexdigest()[:8]
+        salt = hashlib.sha1(str(
+            random.random()).encode('utf-8')).hexdigest()[:8]
         ext = filename.split('.')[:-1]
-        filename = '.'.join([hashlib.sha1((salt+filename).encode('utf-8')).hexdigest()[:15], ext])
+        filename = '.'.join([
+            hashlib.sha1((salt + filename).encode('utf-8')).hexdigest()[:15],
+            ext
+        ])
 
         return os.path.join(path, folder, instance.user.token, filename)
 
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, related_name='profile', verbose_name=_('baseProfile', 'user'))
-    mugshot = models.ImageField(blank=True, null=True, upload_to=_get_upload_path, verbose_name=_('baseProfile', 'mugshot'))
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                models.CASCADE,
+                                primary_key=True,
+                                related_name='profile',
+                                verbose_name=_('baseProfile', 'user'))
+    mugshot = models.ImageField(blank=True,
+                                null=True,
+                                upload_to=_get_upload_path,
+                                verbose_name=_('baseProfile', 'mugshot'))
 
     def __str__(self):
         return "{}'s profile".format(self.user.username)
@@ -241,7 +309,6 @@ class BaseProfile(models.Model):
 
 
 class DiamondProfile(models.Model):
-
     """
     """
 
@@ -250,7 +317,6 @@ class DiamondProfile(models.Model):
 
 
 class Profile(DiamondProfile, BaseProfile):
-
     """
     """
 
@@ -263,11 +329,12 @@ class Profile(DiamondProfile, BaseProfile):
 
 
 class SocialUserData(models.Model):
-
     """a model for social auth
     """
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='social_ids')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             models.CASCADE,
+                             related_name='social_ids')
     service = models.CharField(db_index=True, max_length=255)
     username = models.CharField(db_index=True, max_length=255)
 

@@ -1,7 +1,7 @@
 """
 a base settings for dev, prod
 
-here, we can check django-environ 
+here, we can check django-environ
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -9,7 +9,8 @@ import os
 import sys
 from django.utils.translation import ugettext_lazy as _
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(BASE_DIR, 'api'))
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +27,7 @@ USE_X_FORWARDED_HOST = True
 # Application definition
 
 INSTALLED_APPS = (
-    'grappelli', # must put before django.contrib.admin
+    'grappelli',  # must put before django.contrib.admin
     'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,7 +46,6 @@ INSTALLED_APPS = (
     'member',
     'injury',
 )
-
 
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -98,20 +97,19 @@ AUTHENTICATION_BACKENDS = (
     'member.backends.SocialLoginBackend',
 )
 
-
 REST_FRAMEWORK = {
-    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    'DEFAULT_VERSIONING_CLASS':
+    'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_PERMISSION_CLASSES':
+    ('rest_framework.permissions.IsAuthenticated', ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'EXCEPTION_HANDLER': 'api.utils.api_error_handler',
+    'EXCEPTION_HANDLER':
+    'api.utils.api_error_handler',
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -130,8 +128,14 @@ LANGUAGE_CODE = 'en-us'
 #    settings.MODELTRANSLATION_LANGUAGES or registered or unregistered a field
 #
 # More detail to see http://django-modeltranslation.readthedocs.io/en/latest/registration.html#migrations-django-1-7
-MODELTRANSLATION_LANGUAGES = ('en', 'zh-cn', )
-MODELTRANSLATION_FALLBACK_LANGUAGES = ('en', 'zh-cn', )
+MODELTRANSLATION_LANGUAGES = (
+    'en',
+    'zh-cn',
+)
+MODELTRANSLATION_FALLBACK_LANGUAGES = (
+    'en',
+    'zh-cn',
+)
 MODELTRANSLATION_AUTO_POPULATE = True
 
 TIME_ZONE = 'UTC'
@@ -142,16 +146,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 AUTH_USER_MODEL = 'member.User'
 
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale'),
-)
-
+LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'), )
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -176,7 +176,8 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format':
+            '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
         'simple': {
             'format': '%(levelname)s %(module)s %(message)s'

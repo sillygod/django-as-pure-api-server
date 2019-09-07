@@ -1,17 +1,17 @@
 from django.db import models
-from modeltranslation.utils import auto_populate
-from mptt.models import (
-    MPTTModel,
-    TreeForeignKey
-)
+from mptt.models import (MPTTModel, TreeForeignKey)
 
 
 class Injury(MPTTModel):
-
     """
     """
     name = models.CharField(default='', max_length=64, unique=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = TreeForeignKey('self',
+                            models.CASCADE,
+                            null=True,
+                            blank=True,
+                            related_name='children',
+                            db_index=True)
 
     class MPTTMeta:
         order_insertion_by = ['name']

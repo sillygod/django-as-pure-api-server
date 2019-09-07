@@ -2,16 +2,11 @@ import hashlib
 import hmac
 import logging
 
-from urllib.parse import (
-    urljoin,
-    urlencode,
-    urlunparse,
-    parse_qs
-)
+from urllib.parse import (urljoin, urlencode, urlunparse, parse_qs)
 
 import requests
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 
 logger = logging.getLogger('member.oauth2_client')
@@ -31,13 +26,13 @@ def parse_response(response):
         return response.json()
     else:
         content = parse_qs(response.text)
-        content = dict((x, y[0] if len(y) == 1 else y) for x, y in content.items())
+        content = dict(
+            (x, y[0] if len(y) == 1 else y) for x, y in content.items())
 
         return content
 
 
 class Oauth2RequestAuthorizer(requests.auth.AuthBase):
-
     """authorization header for requests
     """
 
@@ -45,7 +40,8 @@ class Oauth2RequestAuthorizer(requests.auth.AuthBase):
         self.access_token = access_token
 
     def __call__(self, request):
-        request.headers['Authorization'] = 'Bearer {}'.format(self.access_token)
+        request.headers['Authorization'] = 'Bearer {}'.format(
+            self.access_token)
         return request
 
 
@@ -61,7 +57,12 @@ class OAuth2Client:
 
     scope = None
 
-    def __init__(self, local_host, code=None, client_id=None, client_secret=None, scope=None):
+    def __init__(self,
+                 local_host,
+                 code=None,
+                 client_id=None,
+                 client_secret=None,
+                 scope=None):
         self.local_host = local_host
 
         if client_id and client_secret:
@@ -70,7 +71,8 @@ class OAuth2Client:
 
         if code:
             access_token = self.get_access_token(code)
-            self.authorizer = Oauth2RequestAuthorizer(access_token=access_token)
+            self.authorizer = Oauth2RequestAuthorizer(
+                access_token=access_token)
         else:
             self.authorizer = None
 
@@ -85,12 +87,14 @@ class OAuth2Client:
         self.authorizer = Oauth2RequestAuthorizer(access_token=token)
 
     def get_access_token(self, code):
-        data = {'grant_type': 'authorization_code',
-                'client_id': self.client_id,
-                'client_secret': self.client_secret,
-                'code': code,
-                'redirect_uri': self.get_redirect_url(),
-                'scope': self.scope}
+        data = {
+            'grant_type': 'authorization_code',
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
+            'code': code,
+            'redirect_uri': self.get_redirect_url(),
+            'scope': self.scope
+        }
 
         response = self.post(self.token_url, data=data, authorize=False)
         return response['access_token']
@@ -102,10 +106,12 @@ class OAuth2Client:
         return urljoin(self.local_host, path)
 
     def get_login_url(self):
-        data = {'response_type': 'code',
-                'scope': self.scope,
-                'redirect_url': self.get_redirect_url,
-                'client_id': self.client_id}
+        data = {
+            'response_type': 'code',
+            'scope': self.scope,
+            'redirect_url': self.get_redirect_url,
+            'client_id': self.client_id
+        }
         query = urlencode(data)
         return urljoin(self.auth_url, url(query=query))
 
@@ -145,7 +151,6 @@ class OAuth2Client:
         raise NotImplementedError()
 
 
-
 class FacebookClient(OAuth2Client):
 
     service = 'FACEBOOK'
@@ -164,10 +169,12 @@ class FacebookClient(OAuth2Client):
     def get_request_params(self, data=None, authorize=True):
         data = data or {}
         if authorize:
-            data.update({'appsecret_proof': hmac.new(
-                settings.SOCIAL_AUTH_FACEBOOK_SECRET.encode('utf-8'),
-                msg=self.authorizer.access_token.encode('utf-8'),
-                digestmod=hashlib.sha256).hexdigests()})
+            data.update({
+                'appsecret_proof':
+                hmac.new(settings.SOCIAL_AUTH_FACEBOOK_SECRET.encode('utf-8'),
+                         msg=self.authorizer.access_token.encode('utf-8'),
+                         digestmod=hashlib.sha256).hexdigests()
+            })
 
         return super().get_request_params(data, authorize)
 

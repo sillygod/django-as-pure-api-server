@@ -1,7 +1,7 @@
 """
 a base settings for dev, prod
 
-here, we can check django-environ 
+here, we can check django-environ
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -10,6 +10,7 @@ from .base import * # pylint: disable=W0614
 
 INSTALLED_APPS += (
     'debug_toolbar',
+    'django_extensions',
 )
 
 MIDDLEWARE = (

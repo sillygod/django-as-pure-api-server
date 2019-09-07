@@ -2,16 +2,16 @@ FROM python:3.7-alpine as builder
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update && \
-  apk add --no-cache curl build-base jpeg-dev zlib-dev git postgresql-dev linux-headers musl-dev
+  apk add --no-cache curl build-base gcc jpeg-dev zlib-dev git postgresql-dev linux-headers musl-dev
 ADD requirements /app/requirements
-RUN pip install --install-option="--prefix=/install" --no-cache-dir -r requirements/prod.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install -r /app/requirements/dev.txt
 
 FROM python:3.7-alpine
-COPY --from=builder /install /usr/local
-COPY . /app
-
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /app
-
 # https://docs.docker.com/engine/reference/builder/
 # According to the doc, we can use the exec form of ENTRYPOINT to set fairly stable default
 # commands and arguments.

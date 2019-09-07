@@ -1,6 +1,9 @@
 -r prod.txt
-pytest==3.0.7
-pytest-django==3.1.2
+pytest==5.1.2
+pytest-django==3.5.1
 ipython
-django-debug-toolbar==1.9
+django-debug-toolbar==2.0
+django-extensions==2.2.1
+
+# test whether we need this or not
 django-debug-toolbar-request-history
