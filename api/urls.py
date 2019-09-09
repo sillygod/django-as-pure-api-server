@@ -28,7 +28,7 @@ class MySchemaGenerator(schemas.SchemaGenerator):
         if func and func.__doc__:
             try:
                 func_doc, schema_doc = func.__doc__.split('--swagger schema--')
-                yaml_doc = yaml.load(schema_doc)
+                yaml_doc = yaml.safe_load(schema_doc)
             except:
                 yaml_doc = None
 

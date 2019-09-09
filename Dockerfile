@@ -3,7 +3,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apk update && \
   apk add --no-cache curl build-base jpeg-dev zlib-dev git postgresql-dev linux-headers musl-dev
-ADD requirements /app/requirements
+COPY requirements /app/requirements
 RUN pip install --install-option="--prefix=/install" --no-cache-dir -r requirements/prod.txt
 
 FROM python:3.7-alpine

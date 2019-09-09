@@ -3,7 +3,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apk update && \
   apk add --no-cache curl build-base gcc jpeg-dev zlib-dev git postgresql-dev linux-headers musl-dev
-ADD requirements /app/requirements
+COPY requirements /app/requirements
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install -r /app/requirements/dev.txt
