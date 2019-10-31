@@ -9,6 +9,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install -r /app/requirements/dev.txt
 
 FROM python:3.7-alpine
+RUN apk add --no-cache jpeg-dev zlib-dev
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 WORKDIR /app

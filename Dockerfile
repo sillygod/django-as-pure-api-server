@@ -7,6 +7,7 @@ COPY requirements /app/requirements
 RUN pip install --install-option="--prefix=/install" --no-cache-dir -r requirements/prod.txt
 
 FROM python:3.7-alpine
+RUN apk add --no-cache jpeg-dev zlib-dev
 COPY --from=builder /install /usr/local
 COPY . /app
 
