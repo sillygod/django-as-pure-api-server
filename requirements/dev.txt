@@ -2,7 +2,7 @@
 pytest==5.1.2
 pytest-django==3.5.1
 ipython
-django-debug-toolbar==2.0
+django-debug-toolbar==2.2.1
 django-extensions==2.2.1
 
 # test whether we need this or not
